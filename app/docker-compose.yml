@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  fastapi:
+    container_name: fastapi
+    #image: fastapi:app
+    build: ./fastapi
+    volumes:
+      - ./fastapi:/fastapi
+      - /lib/arm-linux-gnueabihf:/lib/arm-linux-gnueabihf
+    environment:
+      - LD_LIBRARY_PATH=/lib/arm-linux-gnueabihf
+    ports:
+      - "8000:8000"
+    devices:
+      - /dev/vchiq
+    working_dir: /fastapi
+    #command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
+  streamlit:
+    container_name: streamlit
+    #image: streamlit:app
+    build: ./streamlit 
+    working_dir: /streamlit
+    ports:
+      - "80:80"
+    volumes:
+      - "./streamlit:/streamlit"
+    depends_on:
+      - fastapi
+    #command: streamlit run main.py --server.port 80
+
